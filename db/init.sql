@@ -18,6 +18,12 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS Cart (
         UserID INT,
         ProductID INT,
-        Quantity INT
+        Quantity INT,
+        BeingOrdered INT
+);
+
+CREATE TABLE IF NOT EXISTS Orders (
+        OrderID INT,
+        UserID INT
 );
 
