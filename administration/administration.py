@@ -1,6 +1,7 @@
 import mysql.connector
 import json
 import sys
+from tabulate import tabulate
 
 config = {
     'user': 'root',
@@ -12,14 +13,14 @@ config = {
 
 cursor = None
 
-def adaugare_produs(ProductID, Name, Category, Price, Stock):
+def adaugare_produs(ProductID, Name, Brand, Category, Price, Stock):
 
     global cursor
 
     add_product = ("INSERT INTO Products "
-            "(ProductID, Name, Category, Price, Stock) "
-            "VALUES (%s, %s, %s, %s, %s)")
-    product_data = (ProductID, Name, Category, Price, Stock)
+            "(ProductID, Name, Brand, Category, Price, Stock) "
+            "VALUES (%s, %s, %s, %s, %s, %s)")
+    product_data = (ProductID, Name, Brand, Category, Price, Stock)
     cursor.execute(add_product, product_data)
 
 def actualizare_stoc(ProductID, Stock):
@@ -33,30 +34,40 @@ def actualizare_stoc(ProductID, Stock):
 def anulare_comanda(OrderID):
 
     global cursor
-    cursor.execute("SELECT * FROM Products")
-    products_results = [(ProductID, Name, Category, Price, Stock) for (ProductID, Name, Category, Price, Stock) in cursor]
-    print("Products list:")
-    print(products_results)
 
+    cancel_order = ("DELETE FROM Orders WHERE OrderID = %s")
+    cancel_order_data = (OrderID, )
+    cursor.execute(cancel_order, cancel_order_data)
+
+def stergere_produs(ProductID):
+
+    global cursor
+
+    remove_product = ("DELETE FROM Products WHERE ProductID = %s")
+    remove_product_data = (ProductID, )
+    cursor.execute(remove_product, remove_product_data)
 
 def afisare_produse():
 
     global cursor
+
     cursor.execute("SELECT * FROM Products")
-    products_results = [(ProductID, Name, Category, Price, Stock) for (ProductID, Name, Category, Price, Stock) in cursor]
-    print("Products list:")
-    print(products_results)
+    result = cursor.fetchall()
+    print(tabulate(result, headers=["ProductID", "Name", "Brand", "Category", "Price", "Stock"], tablefmt='psql'))
 
 def print_administration_menu():
 
-    print("---------- Administration ----------")
-    print("Usage (type one of the following numbers): ")
-    print("1 - Connect to the database")
-    print("2 - Products list (If connected to the database)")
-    print("3 - Add Product (If connected to the database)")
-    print("4 - Update stock (If connected to the database)")
-    print("5 - Exit")
-    print("------------------------------------")
+    print("+-------------------- Administration --------------------+")
+    print("| Usage (type one of the following numbers then ENTER):  |")
+    print("+--------------------------------------------------------+")
+    print("| 1 - Connect to the database                            |")
+    print("| 2 - Products list (If connected to the database)       |")
+    print("| 3 - Add product (If connected to the database)         |")
+    print("| 4 - Update stock (If connected to the database)        |")
+    print("| 5 - Cancel order (If connected to the database)        |")
+    print("| 6 - Remove product (If connected to the database)      |")
+    print("| 7 - Exit                                               |")
+    print("+--------------------------------------------------------+")
 
 def start_administration():
 
@@ -84,30 +95,56 @@ def start_administration():
         elif line.rstrip() == "3":
 
             print("> Enter product to add: ")
-            print("> Format: <ProductID> <Name> <Category> <Price> <Stock>")
+            print("> Format: <ProductID>;<Name>;<Brand>;<Category>;<Price>;<Stock>")
 
             for word in sys.stdin:
 
-                words = word.rstrip().split()
+                words = word.rstrip().split(";")
 
-                adaugare_produs(words[0], words[1], words[2], words[3], words[4])
+                adaugare_produs(words[0], words[1], words[2], words[3], words[4], words[5])
                 connection.commit()
                 break
 
         elif line.rstrip() == "4":
 
             print("> Enter information to update the stock of the product: ")
-            print("> Format: <ProductID> <New Stock>")
+            print("> Format: <ProductID>;<New Stock>")
 
             for word in sys.stdin:
 
-                words = word.rstrip().split()
+                words = word.rstrip().split(";")
 
                 actualizare_stoc(words[0], words[1])
                 connection.commit()
                 break
 
         elif line.rstrip() == "5":
+
+            print("> Enter information to cancel a specific order: ")
+            print("> Format: <OrderID>")
+
+            for word in sys.stdin:
+
+                words = word.rstrip().split(";")
+
+                anulare_comanda(words[0])
+                connection.commit()
+                break
+
+        elif line.rstrip() == "6":
+
+            print("> Enter information to remove a specific product: ")
+            print("> Format: <ProductID>")
+
+            for word in sys.stdin:
+
+                words = word.rstrip().split(";")
+
+                stergere_produs(words[0])
+                connection.commit()
+                break
+
+        elif line.rstrip() == "7":
 
             print("> Exiting...")
             break
