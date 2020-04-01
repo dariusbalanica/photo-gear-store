@@ -1,6 +1,7 @@
 version: "2"
 services:
   server:
+    image: dariusbalanica/photo-gear-store:latest-server
     build: ./server
     links:
       - db
@@ -12,7 +13,7 @@ services:
     stdin_open: true
 
   client:
-    build: ./client
+    image: dariusbalanica/photo-gear-store:latest-client
     links:
       - server
     depends_on:
@@ -21,7 +22,7 @@ services:
     stdin_open: true
 
   administration:
-    build: ./administration
+    image: dariusbalanica/photo-gear-store:latest-administration
     links:
       - db
     depends_on:
