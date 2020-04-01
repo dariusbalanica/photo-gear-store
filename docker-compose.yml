@@ -11,6 +11,15 @@ services:
     tty: true
     stdin_open: true
 
+  client:
+    build: ./client
+    links:
+      - server
+    depends_on:
+      - db
+    tty: true
+    stdin_open: true
+
   administration:
     build: ./administration
     links:
