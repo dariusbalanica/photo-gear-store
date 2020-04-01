@@ -7,7 +7,6 @@ from flask import request
 
 app = Flask(__name__)
 
-# Datele folosite pentru conectarea la baza de date
 config = {
     'user': 'root',
     'password': 'root',
@@ -16,37 +15,56 @@ config = {
     'database': 'store'
 }
 
-# Un cursor global utilizat pentru manipularea tabelelor din baza de date
 cursor = None
 
-# Functie care realizeaza afisarea produselor intr-un format human-readable,
-# urmand sa fie apelata in momentul in care clientul face un request pe ruta specificata
-@app.route("/")
-def list_products():
+@app.route("/register")
+def register():
+
+    return None
+
+@app.route("/log_in")
+def log_in():
+
+    return None
+
+@app.route("/products_list")
+def products_list():
 
     global cursor
 
-    # Se realizeza conectarea la baza de date
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor()
 
-    # Este interogata tabela asociata produselor din cadrul magazinului
     cursor.execute("SELECT * FROM Products")
     results = [(ProductID, Name, Category, Price, Stock) for (ProductID, Name, Category, Price, Stock) in cursor]
 
-    # Se inchide conexiunea la baza de date
     cursor.close()
     connection.close()
 
-    # Se intoarce un json ce contine datele despre produse
     return json.dumps({"Products" : results})
 
-# Functie care intoarce toate produsele adaugate in cosul de cumparaturi de
-# catre un anumit user, identificat prin ID-ul sau trimis ca parametru, urmand
-# sa fie apelata in momentul in care clientul face request pe ruta
-# specificata
-@app.route("/cart")
-def list_cart():
+@app.route("/filter_products")
+def filter_products():
+
+    return None
+
+@app.route("/sort_products")
+def sort_products():
+
+    return None
+
+@app.route("/add_to_cart")
+def add_to_cart():
+
+    return None
+
+@app.route("/remove_from_cart")
+def remove_from_cart():
+
+    return None
+
+@app.route("/show_cart")
+def show_cart():
 
     global cursor
 
@@ -76,6 +94,11 @@ def list_cart():
 
     # Se intorc produsele asociate userului
     return json.dumps({"Cart Result": cart_result})
+
+@app.route("/buy_products")
+def buy_products():
+
+    return None
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
