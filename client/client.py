@@ -3,6 +3,7 @@ import sys
 import json
 
 user_id = 0
+username = ""
 
 def print_client_menu():
 
@@ -18,28 +19,85 @@ def print_client_menu():
     print("| 7 - Remove from cart                                   |")
     print("| 8 - Show cart                                          |")
     print("| 9 - Buy products                                       |")
-    print("| 10 - Exit                                              |")
+    print("| 10 - Log out                                           |")
+    print("| 11 - Exit                                              |")
     print("+--------------------------------------------------------+")
+
+def print_logged_user():
+
+    global user_id
+    global username
+
+    if user_id == 0:
+        print("+--------------------------------------------------------+")
+        print("|           You are not logged in right now!             |")
+        print("+--------------------------------------------------------+")
+    else:
+        print("+--------------------------------------------------------+")
+        print("|           Logged in as " + username + " " * (58 - 25 - len(username)) + "|")
+        print("+--------------------------------------------------------+")
 
 def start_client():
 
     global user_id
+    global username
 
+    print_logged_user()
     print_client_menu()
 
     for line in sys.stdin:
 
+        #print_client_menu()
+
         if line.rstrip() == "1":
 
-            response = requests.get(sys.argv[1] + "/register")
+            print("+--------------------------------------------------------+")
+            print("| Enter data to register:                                |")
+            print("| Format: <name>;<email>;<username>;<password>           |")
+            print("+--------------------------------------------------------+")
+
+            for word in sys.stdin:
+                register_info = word.rstrip()
+                break
+
+            response = requests.get(sys.argv[1] + "/register", params = {"register info" : register_info})
             response_dict = json.loads(response.text)
-            print(response_dict)
+
+            if responde_dict["username"] == "user taken":
+                print("+--------------------------------------------------------+")
+                print("| User already exists, please try again.                 |")
+                print("+--------------------------------------------------------+")
+                continue
+
+            username = response_dict["username"]
+            user_id = response_dict["user_id"]
+
+            print_logged_user()
 
         elif line.rstrip() == "2":
 
-            response = requests.get(sys.argv[1] + "/log_in")
+            print("+--------------------------------------------------------+")
+            print("| Enter data to log in:                                  |")
+            print("| Format: <username>;<password>                          |")
+            print("+--------------------------------------------------------+")
+
+            for word in sys.stdin:
+                log_in_info = word.rstrip()
+                break
+
+            response = requests.get(sys.argv[1] + "/log_in", params = {"log in info" : log_in_info})
             response_dict = json.loads(response.text)
-            print(response_dict)
+
+            if responde_dict["username"] == "unexistent user":
+                print("+--------------------------------------------------------+")
+                print("| Unexistent user, please try again.                     |")
+                print("+--------------------------------------------------------+")
+                continue
+
+            username = response_dict["username"]
+            user_id = response_dict["user_id"]
+
+            print_logged_user()
 
         elif line.rstrip() == "3":
 
@@ -84,6 +142,20 @@ def start_client():
             print(response_dict)
 
         elif line.rstrip() == "10":
+
+            print("+--------------------------------------------------------+")
+            print("| Logging out...                                         |")
+            print("+--------------------------------------------------------+")
+
+            response = requests.get(sys.argv[1] + "/log_out", params = {"user_id" : user_id})
+            response_dict = json.loads(response.text)
+
+            user_name = response_dict["username"]
+            user_id = response_dict["user_id"]
+
+            print_logged_user()
+
+        elif line.rstrip() == "11":
 
             print("> Exiting...")
             break

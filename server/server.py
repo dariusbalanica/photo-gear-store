@@ -16,11 +16,51 @@ config = {
 }
 
 cursor = None
+user_id = 0
+username = ""
 
 @app.route("/register")
 def register():
 
-    return None
+    global cursor
+    global user_id
+    global username
+
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+
+    register_info = str(request.args.get("register info"))
+    register_info_list = register_info.split()
+
+    search_user = ("SELECT * FROM Users WHERE Name = %s OR Username = %s")
+    search_user_data = (register_info_list[0], register_info_list[2])
+    cursor.execute(search_user, search_user_data)
+
+    result = cursor.fetchone()
+
+    random_id = random.randrange(1, 10000)
+
+    if result == None:
+
+        add_user = ("INSERT INTO Users "
+            "(UserID, Name, Email, Username, Password) VALUES (%s, %s, %s, %s, %s)")
+        add_user_data = (random_id, register_info_list[0], \
+        register_info_list[1], register_info_list[2], register_info_list[3])
+        cursor.execute(add_user, add_user_data)
+        connection.commit()
+
+        user_id = random_id
+        username = register_info_list[2]
+
+    else:
+
+        user_id = 0
+        username = "user taken"
+
+    cursor.close()
+    connection.close()
+
+    return json.dumps({"user_id" : user_id, "username" : username})
 
 @app.route("/log_in")
 def log_in():
@@ -97,6 +137,11 @@ def show_cart():
 
 @app.route("/buy_products")
 def buy_products():
+
+    return None
+
+@app.route("/log_out")
+def log_out():
 
     return None
 

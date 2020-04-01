@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS Products (
 
 CREATE TABLE IF NOT EXISTS Users (
         UserID INT,
+        Name VARCHAR(100),
+        Email VARCHAR(100),
         Username VARCHAR(100),
         Password VARCHAR(100)
 );
