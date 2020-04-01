@@ -2,7 +2,6 @@ version: "2"
 services:
   server:
     image: dariusbalanica/photo-gear-store:latest-server
-    build: ./server
     links:
       - db
     depends_on:
