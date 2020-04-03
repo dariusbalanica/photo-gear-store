@@ -34,7 +34,7 @@ def print_logged_user():
         print("+--------------------------------------------------------+")
     else:
         print("+--------------------------------------------------------+")
-        print("|           Logged in as " + username + " " * (58 - 25 - len(username)) + "|")
+        print("|           Logged in as " + username + " " * (32 - len(username)) + "|")
         print("+--------------------------------------------------------+")
 
 def start_client():
@@ -46,8 +46,6 @@ def start_client():
     print_client_menu()
 
     for line in sys.stdin:
-
-        #print_client_menu()
 
         if line.rstrip() == "1":
 
@@ -63,16 +61,24 @@ def start_client():
             response = requests.get(sys.argv[1] + "/register", params = {"register info" : register_info})
             response_dict = json.loads(response.text)
 
-            if responde_dict["username"] == "user taken":
+            if response_dict["username"] == "user taken":
                 print("+--------------------------------------------------------+")
                 print("| User already exists, please try again.                 |")
                 print("+--------------------------------------------------------+")
+                print_client_menu()
+                continue
+            elif response_dict["username"] == "already logged in":
+                print("+--------------------------------------------------------+")
+                print("| Already logged in as a user, please log out first.     |")
+                print("+--------------------------------------------------------+")
+                print_client_menu()
                 continue
 
             username = response_dict["username"]
             user_id = response_dict["user_id"]
 
             print_logged_user()
+            print_client_menu()
 
         elif line.rstrip() == "2":
 
@@ -88,16 +94,24 @@ def start_client():
             response = requests.get(sys.argv[1] + "/log_in", params = {"log in info" : log_in_info})
             response_dict = json.loads(response.text)
 
-            if responde_dict["username"] == "unexistent user":
+            if response_dict["username"] == "login error":
                 print("+--------------------------------------------------------+")
-                print("| Unexistent user, please try again.                     |")
+                print("| Unexistent user, or wrong credentials, try again.      |")
                 print("+--------------------------------------------------------+")
+                print_client_menu()
+                continue
+            elif response_dict["username"] == "already logged in":
+                print("+--------------------------------------------------------+")
+                print("| Already logged in as a user, please log out first.     |")
+                print("+--------------------------------------------------------+")
+                print_client_menu()
                 continue
 
             username = response_dict["username"]
             user_id = response_dict["user_id"]
 
             print_logged_user()
+            print_client_menu()
 
         elif line.rstrip() == "3":
 
@@ -143,17 +157,27 @@ def start_client():
 
         elif line.rstrip() == "10":
 
-            print("+--------------------------------------------------------+")
-            print("| Logging out...                                         |")
-            print("+--------------------------------------------------------+")
-
-            response = requests.get(sys.argv[1] + "/log_out", params = {"user_id" : user_id})
+            response = requests.get(sys.argv[1] + "/log_out")
             response_dict = json.loads(response.text)
 
-            user_name = response_dict["username"]
-            user_id = response_dict["user_id"]
+            if response_dict["username"] == "not logged in":
+
+                print("+--------------------------------------------------------+")
+                print("| Not logged in, no need to log out.                     |")
+                print("+--------------------------------------------------------+")
+                print_client_menu()
+                continue
+
+            else:
+
+                print("+--------------------------------------------------------+")
+                print("| Logging out...                                         |")
+                print("+--------------------------------------------------------+")
+                username = ""
+                user_id = 0
 
             print_logged_user()
+            print_client_menu()
 
         elif line.rstrip() == "11":
 
