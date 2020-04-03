@@ -147,14 +147,15 @@ def start_administration():
         elif line.rstrip() == "7":
 
             print("> Exiting...")
+            if db_connected == True:
+                cursor.close()
+                connection.close()
+                db_connected = False
             break
 
         else:
 
             print_administration_menu()
-
-    cursor.close()
-    connection.close()
 
 start_administration()
 
