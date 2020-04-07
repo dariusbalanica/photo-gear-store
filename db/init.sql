@@ -21,12 +21,11 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS Cart (
         UserID INT,
         ProductID INT,
-        Quantity INT,
-        BeingOrdered INT
+        Quantity INT
 );
 
 CREATE TABLE IF NOT EXISTS Orders (
-        OrderID INT,
+        OrderID VARCHAR(100),
         UserID INT
 );
 
