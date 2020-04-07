@@ -73,26 +73,25 @@ def start_administration():
 
     global cursor
 
-    db_connected = False
-
     print_administration_menu()
 
     for line in sys.stdin:
 
         if line.rstrip() == "1":
 
-            if db_connected == False:
-
-                connection = mysql.connector.connect(**config)
-                cursor = connection.cursor()
-                db_connected = True
-                print("Connected to the database!")
+            print("nimic")
 
         elif line.rstrip() == "2":
+            connection = mysql.connector.connect(**config)
+            cursor = connection.cursor()
 
             afisare_produse()
 
+            cursor.close()
+            connection.close()
         elif line.rstrip() == "3":
+            connection = mysql.connector.connect(**config)
+            cursor = connection.cursor()
 
             print("> Enter product to add: ")
             print("> Format: <ProductID>;<Name>;<Brand>;<Category>;<Price>;<Stock>")
@@ -105,7 +104,11 @@ def start_administration():
                 connection.commit()
                 break
 
+            cursor.close()
+            connection.close()
         elif line.rstrip() == "4":
+            connection = mysql.connector.connect(**config)
+            cursor = connection.cursor()
 
             print("> Enter information to update the stock of the product: ")
             print("> Format: <ProductID>;<New Stock>")
@@ -118,7 +121,11 @@ def start_administration():
                 connection.commit()
                 break
 
+            cursor.close()
+            connection.close()
         elif line.rstrip() == "5":
+            connection = mysql.connector.connect(**config)
+            cursor = connection.cursor()
 
             print("> Enter information to cancel a specific order: ")
             print("> Format: <OrderID>")
@@ -131,7 +138,11 @@ def start_administration():
                 connection.commit()
                 break
 
+            cursor.close()
+            connection.close()
         elif line.rstrip() == "6":
+            connection = mysql.connector.connect(**config)
+            cursor = connection.cursor()
 
             print("> Enter information to remove a specific product: ")
             print("> Format: <ProductID>")
@@ -144,13 +155,11 @@ def start_administration():
                 connection.commit()
                 break
 
+            cursor.close()
+            connection.close()
         elif line.rstrip() == "7":
 
             print("> Exiting...")
-            if db_connected == True:
-                cursor.close()
-                connection.close()
-                db_connected = False
             break
 
         else:
