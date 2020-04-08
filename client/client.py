@@ -53,13 +53,20 @@ def start_client():
             if user_id == 0:
 
                 print("+--------------------------------------------------------+")
-                print("| Enter data to register:                                |")
+                print("| Enter data to register (or press just ENTER to quit):  |")
                 print("| Format: <name>;<email>;<username>;<password>           |")
                 print("+--------------------------------------------------------+")
 
                 for word in sys.stdin:
                     register_info = word.rstrip()
                     break
+
+                if len(register_info.split(";")) != 4 or register_info.split(";")[-1] == "":
+                    print("+--------------------------------------------------------+")
+                    print("| Invalid data format                                    |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
 
                 response = requests.get(sys.argv[1] + "/register", params = {"register info" : register_info})
                 response_dict = json.loads(response.text)
@@ -97,6 +104,13 @@ def start_client():
                 for word in sys.stdin:
                     log_in_info = word.rstrip()
                     break
+
+                if len(log_in_info.split(";")) != 2 or log_in_info.split(";")[-1] == "":
+                    print("+--------------------------------------------------------+")
+                    print("| Invalid data format                                    |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
 
                 response = requests.get(sys.argv[1] + "/log_in", params = {"log in info" : log_in_info})
                 response_dict = json.loads(response.text)
@@ -142,6 +156,13 @@ def start_client():
                 filter_products_info = word.rstrip()
                 break
 
+            if len(filter_products_info.split(";")) != 2 or filter_products_info.split(";")[-1] == "":
+                print("+--------------------------------------------------------+")
+                print("| Invalid data format                                    |")
+                print("+--------------------------------------------------------+")
+                print_client_menu()
+                continue
+
             response = requests.get(sys.argv[1] + "/filter_products", params = {"filter products info" : filter_products_info})
             response_dict = json.loads(response.text)
 
@@ -162,6 +183,13 @@ def start_client():
             for word in sys.stdin:
                 sort_products_info = word.rstrip()
                 break
+
+            if len(sort_products_info.split(";")) != 2 or sort_products_info.split(";")[-1] == "":
+                print("+--------------------------------------------------------+")
+                print("| Invalid data formet                                    |")
+                print("+--------------------------------------------------------+")
+                print_client_menu()
+                continue
 
             response = requests.get(sys.argv[1] + "/sort_products", params = {"sort products info" : sort_products_info})
             response_dict = json.loads(response.text)
@@ -191,6 +219,13 @@ def start_client():
                 for word in sys.stdin:
                     add_product_info = word.rstrip()
                     break
+
+                if len(add_product_info.split(";")) != 2 or add_product_info.split(";")[-1] == "":
+                    print("+--------------------------------------------------------+")
+                    print("| Invalid data format                                    |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
 
                 response = requests.get(sys.argv[1] + "/add_to_cart", params = {"user id" : user_id, "username" : username, "add product info" : add_product_info})
                 response_dict = json.loads(response.text)
@@ -235,6 +270,13 @@ def start_client():
                 for word in sys.stdin:
                     remove_product_info = word.rstrip()
                     break
+
+                if len(remove_product_info.split(";")) != 2 or remove_product_info.split(";")[-1] == "":
+                    print("+--------------------------------------------------------+")
+                    print("| Invalid data format                                    |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
 
                 response = requests.get(sys.argv[1] + "/remove_from_cart", params = {"user id" : user_id, "username" : username, "remove product info" : remove_product_info})
                 response_dict = json.loads(response.text)
@@ -301,12 +343,19 @@ def start_client():
 
                 print("+--------------------------------------------------------+")
                 print("| Enter data to buy products in cart:                    |")
-                print("| Format: <Name>;<Address>;<CardNumber>;<ExpDate><CVV>   |")
+                print("| Format: <Name>;<Address>;<CardNumber>;<ExpDate>;<CVV>  |")
                 print("+--------------------------------------------------------+")
 
                 for word in sys.stdin:
                     buy_products_info = word.rstrip()
                     break
+
+                if len(buy_products_info.split(";")) != 5 or buy_products_info.split(";")[-1] == "":
+                    print("+--------------------------------------------------------+")
+                    print("| Invalid data format                                    |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
 
                 response = requests.get(sys.argv[1] + "/buy_products", params = {"user id" : user_id, "username" : username, "buy data" : buy_products_info})
                 response_dict = json.loads(response.text)
@@ -352,7 +401,11 @@ def start_client():
 
         elif line.rstrip() == "11":
 
-            print("> Exiting...")
+            print("+--------------------------------------------------------+")
+            print("| Exiting...                                             |")
+            print("+--------------------------------------------------------+")
+            user_id = 0
+            username = ""
             break
 
         else:
