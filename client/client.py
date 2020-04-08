@@ -61,7 +61,7 @@ def start_client():
                     register_info = word.rstrip()
                     break
 
-                if len(register_info.split(";")) != 4 or register_info.split(";")[-1] == "":
+                if len(register_info.split(";")) != 4 or "" in register_info.split(";"):
                     print("+--------------------------------------------------------+")
                     print("| Invalid data format                                    |")
                     print("+--------------------------------------------------------+")
@@ -105,7 +105,7 @@ def start_client():
                     log_in_info = word.rstrip()
                     break
 
-                if len(log_in_info.split(";")) != 2 or log_in_info.split(";")[-1] == "":
+                if len(log_in_info.split(";")) != 2 or "" in log_in_info.split(";"):
                     print("+--------------------------------------------------------+")
                     print("| Invalid data format                                    |")
                     print("+--------------------------------------------------------+")
@@ -156,7 +156,7 @@ def start_client():
                 filter_products_info = word.rstrip()
                 break
 
-            if len(filter_products_info.split(";")) != 2 or filter_products_info.split(";")[-1] == "":
+            if len(filter_products_info.split(";")) != 2 or "" in filter_products_info.split(";"):
                 print("+--------------------------------------------------------+")
                 print("| Invalid data format                                    |")
                 print("+--------------------------------------------------------+")
@@ -184,7 +184,7 @@ def start_client():
                 sort_products_info = word.rstrip()
                 break
 
-            if len(sort_products_info.split(";")) != 2 or sort_products_info.split(";")[-1] == "":
+            if len(sort_products_info.split(";")) != 2 or "" in sort_products_info.split(";"):
                 print("+--------------------------------------------------------+")
                 print("| Invalid data formet                                    |")
                 print("+--------------------------------------------------------+")
@@ -220,7 +220,7 @@ def start_client():
                     add_product_info = word.rstrip()
                     break
 
-                if len(add_product_info.split(";")) != 2 or add_product_info.split(";")[-1] == "":
+                if len(add_product_info.split(";")) != 2 or "" in add_product_info.split(";"):
                     print("+--------------------------------------------------------+")
                     print("| Invalid data format                                    |")
                     print("+--------------------------------------------------------+")
@@ -271,7 +271,7 @@ def start_client():
                     remove_product_info = word.rstrip()
                     break
 
-                if len(remove_product_info.split(";")) != 2 or remove_product_info.split(";")[-1] == "":
+                if len(remove_product_info.split(";")) != 2 or "" in remove_product_info.split(";"):
                     print("+--------------------------------------------------------+")
                     print("| Invalid data format                                    |")
                     print("+--------------------------------------------------------+")
@@ -350,7 +350,7 @@ def start_client():
                     buy_products_info = word.rstrip()
                     break
 
-                if len(buy_products_info.split(";")) != 5 or buy_products_info.split(";")[-1] == "":
+                if len(buy_products_info.split(";")) != 5 or "" in buy_products_info.split(";"):
                     print("+--------------------------------------------------------+")
                     print("| Invalid data format                                    |")
                     print("+--------------------------------------------------------+")
