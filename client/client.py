@@ -1,6 +1,7 @@
 import requests
 import sys
 import json
+from tabulate import tabulate
 
 user_id = 0
 username = ""
@@ -49,66 +50,74 @@ def start_client():
 
         if line.rstrip() == "1":
 
-            print("+--------------------------------------------------------+")
-            print("| Enter data to register:                                |")
-            print("| Format: <name>;<email>;<username>;<password>           |")
-            print("+--------------------------------------------------------+")
+            if user_id == 0:
 
-            for word in sys.stdin:
-                register_info = word.rstrip()
-                break
-
-            response = requests.get(sys.argv[1] + "/register", params = {"register info" : register_info})
-            response_dict = json.loads(response.text)
-
-            if response_dict["username"] == "user taken":
                 print("+--------------------------------------------------------+")
-                print("| User already exists, please try again.                 |")
+                print("| Enter data to register:                                |")
+                print("| Format: <name>;<email>;<username>;<password>           |")
                 print("+--------------------------------------------------------+")
-                print_client_menu()
-                continue
-            elif response_dict["username"] == "already logged in":
+
+                for word in sys.stdin:
+                    register_info = word.rstrip()
+                    break
+
+                response = requests.get(sys.argv[1] + "/register", params = {"register info" : register_info})
+                response_dict = json.loads(response.text)
+
+                if response_dict["username"] == "user taken":
+                    print("+--------------------------------------------------------+")
+                    print("| User already exists, please try again.                 |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
+
+                username = response_dict["username"]
+                user_id = response_dict["user_id"]
+
+            else:
+
                 print("+--------------------------------------------------------+")
                 print("| Already logged in as a user, please log out first.     |")
                 print("+--------------------------------------------------------+")
                 print_client_menu()
                 continue
-
-            username = response_dict["username"]
-            user_id = response_dict["user_id"]
 
             print_logged_user()
             print_client_menu()
 
         elif line.rstrip() == "2":
 
-            print("+--------------------------------------------------------+")
-            print("| Enter data to log in:                                  |")
-            print("| Format: <username>;<password>                          |")
-            print("+--------------------------------------------------------+")
+            if user_id == 0:
 
-            for word in sys.stdin:
-                log_in_info = word.rstrip()
-                break
-
-            response = requests.get(sys.argv[1] + "/log_in", params = {"log in info" : log_in_info})
-            response_dict = json.loads(response.text)
-
-            if response_dict["username"] == "login error":
                 print("+--------------------------------------------------------+")
-                print("| Unexistent user, or wrong credentials, try again.      |")
+                print("| Enter data to log in:                                  |")
+                print("| Format: <username>;<password>                          |")
                 print("+--------------------------------------------------------+")
-                print_client_menu()
-                continue
-            elif response_dict["username"] == "already logged in":
+
+                for word in sys.stdin:
+                    log_in_info = word.rstrip()
+                    break
+
+                response = requests.get(sys.argv[1] + "/log_in", params = {"log in info" : log_in_info})
+                response_dict = json.loads(response.text)
+
+                if response_dict["username"] == "login error":
+                    print("+--------------------------------------------------------+")
+                    print("| Unexistent user, or wrong credentials, try again.      |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
+
+                username = response_dict["username"]
+                user_id = response_dict["user_id"]
+
+            else:
+
                 print("+--------------------------------------------------------+")
                 print("| Already logged in as a user, please log out first.     |")
                 print("+--------------------------------------------------------+")
                 print_client_menu()
                 continue
-
-            username = response_dict["username"]
-            user_id = response_dict["user_id"]
 
             print_logged_user()
             print_client_menu()
@@ -117,50 +126,209 @@ def start_client():
 
             response = requests.get(sys.argv[1] + "/products_list")
             response_dict = json.loads(response.text)
-            print(response_dict)
+            print(tabulate(response_dict["products"], headers=["ProductID", "Name", "Brand", "Category", "Price"], tablefmt='psql'))
+
+            print_logged_user()
+            print_client_menu()
 
         elif line.rstrip() == "4":
 
-            response = requests.get(sys.argv[1] + "/filter_products")
+            print("+--------------------------------------------------------+")
+            print("| Enter data to filter products by price:                |")
+            print("| Format: <minimum_price>;<maximum_price>                |")
+            print("+--------------------------------------------------------+")
+
+            for word in sys.stdin:
+                filter_products_info = word.rstrip()
+                break
+
+            response = requests.get(sys.argv[1] + "/filter_products", params = {"filter products info" : filter_products_info})
             response_dict = json.loads(response.text)
-            print(response_dict)
+
+            print(tabulate(response_dict["products"], headers=["ProductID", "Name", "Brand", "Category", "Price"], tablefmt='psql'))
+
+            print_logged_user()
+            print_client_menu()
 
         elif line.rstrip() == "5":
 
-            response = requests.get(sys.argv[1] + "/sort_products")
+            print("+--------------------------------------------------------+")
+            print("| Sort options: -parameter: Name, Brand, Category, Price |")
+            print("|               -type: ASC, DESC                         |")
+            print("| Enter data to sort products:                           |")
+            print("| Format: <parameter>;<type>                             |")
+            print("+--------------------------------------------------------+")
+
+            for word in sys.stdin:
+                sort_products_info = word.rstrip()
+                break
+
+            response = requests.get(sys.argv[1] + "/sort_products", params = {"sort products info" : sort_products_info})
             response_dict = json.loads(response.text)
-            print(response_dict)
+
+            print(tabulate(response_dict["products"], headers=["ProductID", "Name", "Brand", "Category", "Price"], tablefmt='psql'))
+
+            print_logged_user()
+            print_client_menu()
 
         elif line.rstrip() == "6":
 
-            response = requests.get(sys.argv[1] + "/add_to_cart")
-            response_dict = json.loads(response.text)
-            print(response_dict)
+            if user_id == 0:
+
+                print("+--------------------------------------------------------+")
+                print("| Not logged in, please log in first                     |")
+                print("+--------------------------------------------------------+")
+                print_client_menu()
+                continue
+
+            else:
+
+                print("+--------------------------------------------------------+")
+                print("| Enter data to add a product to cart:                   |")
+                print("| Format: <product_id>;<quantity>                        |")
+                print("+--------------------------------------------------------+")
+
+                for word in sys.stdin:
+                    add_product_info = word.rstrip()
+                    break
+
+                response = requests.get(sys.argv[1] + "/add_to_cart", params = {"user id" : user_id, "username" : username, "add product info" : add_product_info})
+                response_dict = json.loads(response.text)
+
+                if response_dict["cart"] == "unavailable":
+                    print("+--------------------------------------------------------+")
+                    print("| Product unavailable                                    |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
+                elif response_dict["cart"] == "out of stock":
+                    print("+--------------------------------------------------------+")
+                    print("| Not enough items in stock                              |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
+                elif response_dict["cart"] == "success":
+                    print("+--------------------------------------------------------+")
+                    print("| Product successfully added to cart                     |")
+                    print("+--------------------------------------------------------+")
+
+            print_logged_user()
+            print_client_menu()
 
         elif line.rstrip() == "7":
 
-            response = requests.get(sys.argv[1] + "/remove_from_cart")
-            response_dict = json.loads(response.text)
-            print(response_dict)
+            if user_id == 0:
+
+                print("+--------------------------------------------------------+")
+                print("| Not logged in, please log in first                     |")
+                print("+--------------------------------------------------------+")
+                print_client_menu()
+                continue
+
+            else:
+
+                print("+--------------------------------------------------------+")
+                print("| Enter data to remove a product from cart:              |")
+                print("| Format: <product_id>;<quantity_to_remove>              |")
+                print("+--------------------------------------------------------+")
+
+                for word in sys.stdin:
+                    remove_product_info = word.rstrip()
+                    break
+
+                response = requests.get(sys.argv[1] + "/remove_from_cart", params = {"user id" : user_id, "username" : username, "remove product info" : remove_product_info})
+                response_dict = json.loads(response.text)
+
+                if response_dict["cart"] == "not found":
+                    print("+--------------------------------------------------------+")
+                    print("| Product not in cart                                    |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
+                if response_dict["cart"] == "out of stock":
+                    print("+--------------------------------------------------------+")
+                    print("| Product out of stock                                   |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
+                elif response_dict["cart"] == "success":
+                    print("+--------------------------------------------------------+")
+                    print("| Product successfully removed from cart                 |")
+                    print("+--------------------------------------------------------+")
+
+            print_logged_user()
+            print_client_menu()
 
         elif line.rstrip() == "8":
 
-            response = requests.get(sys.argv[1] + "/show_cart")
-            response_dict = json.loads(response.text)
-            print(response_dict)
+            if user_id == 0:
+
+                print("+--------------------------------------------------------+")
+                print("| Not logged in, please log in first                     |")
+                print("+--------------------------------------------------------+")
+                print_client_menu()
+                continue
+
+            else:
+
+                response = requests.get(sys.argv[1] + "/show_cart", params = {"user id" : user_id, "username" : username})
+                response_dict = json.loads(response.text)
+
+                if response_dict["cart"] == "empty":
+
+                    print("+--------------------------------------------------------+")
+                    print("| Empty cart                                             |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
+
+            print(tabulate(response_dict["cart"], headers=["ProductID", "ProductName", "Price", "Quantity"], tablefmt='psql'))
+
+            print_logged_user()
+            print_client_menu()
 
         elif line.rstrip() == "9":
 
-            response = requests.get(sys.argv[1] + "/buy_products")
-            response_dict = json.loads(response.text)
-            print(response_dict)
+            if user_id == 0:
+
+                print("+--------------------------------------------------------+")
+                print("| Not logged in, please log in first                     |")
+                print("+--------------------------------------------------------+")
+                print_client_menu()
+                continue
+
+            else:
+
+                print("+--------------------------------------------------------+")
+                print("| Enter data to buy products in cart:                    |")
+                print("| Format: <Name>;<Address>;<CardNumber>;<ExpDate><CVV>   |")
+                print("+--------------------------------------------------------+")
+
+                for word in sys.stdin:
+                    buy_products_info = word.rstrip()
+                    break
+
+                response = requests.get(sys.argv[1] + "/buy_products", params = {"user id" : user_id, "username" : username, "buy data" : buy_products_info})
+                response_dict = json.loads(response.text)
+
+                if response_dict["buy"] == "empty":
+
+                    print("+--------------------------------------------------------+")
+                    print("| Empty cart, please add products first                  |")
+                    print("+--------------------------------------------------------+")
+                    print_client_menu()
+                    continue
+
+                print("+--------------------------------------------------------+")
+                print("| ReservationID: " + response_dict["buy"] + " " * (40 - len(response_dict["buy"])) + "|")
+                print("+--------------------------------------------------------+")
+
+            print_logged_user()
+            print_client_menu()
 
         elif line.rstrip() == "10":
 
-            response = requests.get(sys.argv[1] + "/log_out")
-            response_dict = json.loads(response.text)
-
-            if response_dict["username"] == "not logged in":
+            if user_id == 0:
 
                 print("+--------------------------------------------------------+")
                 print("| Not logged in, no need to log out.                     |")
@@ -170,11 +338,14 @@ def start_client():
 
             else:
 
+                response = requests.get(sys.argv[1] + "/log_out", params = {"user_id" : user_id, "username" : username})
+                response_dict = json.loads(response.text)
+
                 print("+--------------------------------------------------------+")
                 print("| Logging out...                                         |")
                 print("+--------------------------------------------------------+")
-                username = ""
-                user_id = 0
+                username = response_dict["username"]
+                user_id = response_dict["user_id"]
 
             print_logged_user()
             print_client_menu()
