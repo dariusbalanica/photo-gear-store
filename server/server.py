@@ -153,7 +153,7 @@ def sort_products():
     sort_products_info_list = sort_products_info.split(";")
 
     get_products = ("SELECT ProductID, Name, Brand, Category, Price FROM Products "
-                   "ORDER BY %s %s" % (sort_products_info_list[0], sort_products_info_list[1]))
+                   "ORDER BY %s %s" % (sort_products_info_list[0].strip().replace(" ", "").lower().capitalize(), sort_products_info_list[1].strip().replace(" ", "").upper()))
 
     cursor.execute(get_products)
     results = cursor.fetchall()
