@@ -13,17 +13,17 @@ config = {
 
 cursor = None
 
-def adaugare_produs(ProductID, Name, Brand, Category, Price, Stock):
+def add_product_func(ProductID, Name, Brand, Category, Price, Stock):
 
     global cursor
 
-    add_product = ("INSERT INTO Products "
+    add_product_func = ("INSERT INTO Products "
             "(ProductID, Name, Brand, Category, Price, Stock) "
             "VALUES (%s, %s, %s, %s, %s, %s)")
     product_data = (ProductID, Name, Brand, Category, Price, Stock)
-    cursor.execute(add_product, product_data)
+    cursor.execute(add_product_func, product_data)
 
-def actualizare_stoc(ProductID, Stock):
+def update_stock_func(ProductID, Stock):
 
     global cursor
 
@@ -31,7 +31,7 @@ def actualizare_stoc(ProductID, Stock):
     update_stock_data = (Stock, ProductID)
     cursor.execute(update_stock, update_stock_data)
 
-def anulare_comanda(OrderID):
+def cancel_order_func(OrderID):
 
     global cursor
 
@@ -39,15 +39,15 @@ def anulare_comanda(OrderID):
     cancel_order_data = (OrderID, )
     cursor.execute(cancel_order, cancel_order_data)
 
-def stergere_produs(ProductID):
+def remove_product_func(ProductID):
 
     global cursor
 
-    remove_product = ("DELETE FROM Products WHERE ProductID = %s")
-    remove_product_data = (ProductID, )
-    cursor.execute(remove_product, remove_product_data)
+    remove_product_func = ("DELETE FROM Products WHERE ProductID = %s")
+    remove_product_func_data = (ProductID, )
+    cursor.execute(remove_product_func, remove_product_data)
 
-def afisare_produse():
+def show_products_func():
 
     global cursor
 
@@ -60,13 +60,12 @@ def print_administration_menu():
     print("+-------------------- Administration --------------------+")
     print("| Usage (type one of the following numbers then ENTER):  |")
     print("+--------------------------------------------------------+")
-    print("| 1 - Connect to the database                            |")
-    print("| 2 - Products list (If connected to the database)       |")
-    print("| 3 - Add product (If connected to the database)         |")
-    print("| 4 - Update stock (If connected to the database)        |")
-    print("| 5 - Cancel order (If connected to the database)        |")
-    print("| 6 - Remove product (If connected to the database)      |")
-    print("| 7 - Exit                                               |")
+    print("| 1 - Products list                                      |")
+    print("| 2 - Add product                                        |")
+    print("| 3 - Update stock                                       |")
+    print("| 4 - Cancel order                                       |")
+    print("| 5 - Remove product                                     |")
+    print("| 6 - Exit                                               |")
     print("+--------------------------------------------------------+")
 
 def start_administration():
@@ -78,88 +77,127 @@ def start_administration():
     for line in sys.stdin:
 
         if line.rstrip() == "1":
+            connection = mysql.connector.connect(**config)
+            cursor = connection.cursor()
 
-            print("nimic")
+            show_products_func()
 
+            print_administration_menu()
+            cursor.close()
+            connection.close()
         elif line.rstrip() == "2":
             connection = mysql.connector.connect(**config)
             cursor = connection.cursor()
 
-            afisare_produse()
+            print("+---------------------------------------------------------------+")
+            print("| Enter data to add a product:                                  |")
+            print("| Format: <ProductID>;<Name>;<Brand>;<Category>;<Price>;<Stock> |")
+            print("+---------------------------------------------------------------+")
 
+            for word in sys.stdin:
+
+                words = word.rstrip().split(";")
+                break
+
+            if len(words) != 6 or "" in words:
+                print("+--------------------------------------------------------+")
+                print("| Invalid data formet                                    |")
+                print("+--------------------------------------------------------+")
+                print_administration_menu()
+                continue
+
+            add_product_func(words[0], words[1], words[2], words[3], words[4], words[5])
+            connection.commit()
+
+            print_administration_menu()
             cursor.close()
             connection.close()
         elif line.rstrip() == "3":
             connection = mysql.connector.connect(**config)
             cursor = connection.cursor()
 
-            print("> Enter product to add: ")
-            print("> Format: <ProductID>;<Name>;<Brand>;<Category>;<Price>;<Stock>")
+            print("+---------------------------------------------------------------+")
+            print("| Enter data to update the stock of a product:                  |")
+            print("| Format: <ProductID>;<New Stock>                               |")
+            print("+---------------------------------------------------------------+")
 
             for word in sys.stdin:
 
                 words = word.rstrip().split(";")
-
-                adaugare_produs(words[0], words[1], words[2], words[3], words[4], words[5])
-                connection.commit()
                 break
 
+            if len(words) != 2 or "" in words:
+                print("+--------------------------------------------------------+")
+                print("| Invalid data formet                                    |")
+                print("+--------------------------------------------------------+")
+                print_administration_menu()
+                continue
+
+            update_stock_func(words[0], words[1])
+            connection.commit()
+
+            print_administration_menu()
             cursor.close()
             connection.close()
         elif line.rstrip() == "4":
             connection = mysql.connector.connect(**config)
             cursor = connection.cursor()
 
-            print("> Enter information to update the stock of the product: ")
-            print("> Format: <ProductID>;<New Stock>")
+            print("+---------------------------------------------------------------+")
+            print("| Enter information to cancel a specific order:                 |")
+            print("| Format: <OrderID>                                             |")
+            print("+---------------------------------------------------------------+")
 
             for word in sys.stdin:
 
                 words = word.rstrip().split(";")
-
-                actualizare_stoc(words[0], words[1])
-                connection.commit()
                 break
 
+            if len(words) != 1 or "" in words:
+                print("+--------------------------------------------------------+")
+                print("| Invalid data formet                                    |")
+                print("+--------------------------------------------------------+")
+                print_administration_menu()
+                continue
+
+            cancel_order_func(words[0])
+            connection.commit()
+
+            print_administration_menu()
             cursor.close()
             connection.close()
         elif line.rstrip() == "5":
             connection = mysql.connector.connect(**config)
             cursor = connection.cursor()
 
-            print("> Enter information to cancel a specific order: ")
-            print("> Format: <OrderID>")
+            print("+---------------------------------------------------------------+")
+            print("| Enter information to remove a specific product:               |")
+            print("| Format: <ProductID>                                           |")
+            print("+---------------------------------------------------------------+")
 
             for word in sys.stdin:
 
                 words = word.rstrip().split(";")
-
-                anulare_comanda(words[0])
-                connection.commit()
                 break
 
+            if len(words) != 1 or "" in words:
+                print("+--------------------------------------------------------+")
+                print("| Invalid data formet                                    |")
+                print("+--------------------------------------------------------+")
+                print_administration_menu()
+                continue
+
+            remove_product_func(words[0])
+            connection.commit()
+
+            print_administration_menu()
             cursor.close()
             connection.close()
         elif line.rstrip() == "6":
-            connection = mysql.connector.connect(**config)
-            cursor = connection.cursor()
 
-            print("> Enter information to remove a specific product: ")
-            print("> Format: <ProductID>")
-
-            for word in sys.stdin:
-
-                words = word.rstrip().split(";")
-
-                stergere_produs(words[0])
-                connection.commit()
-                break
-
-            cursor.close()
-            connection.close()
-        elif line.rstrip() == "7":
-
-            print("> Exiting...")
+            print("+--------------------------------------------------------+")
+            print("| Exiting...                                             |")
+            print("+--------------------------------------------------------+")
             break
 
         else:
