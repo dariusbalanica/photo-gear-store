@@ -15,8 +15,8 @@ Services:
 ## Work in progress
 * Database - **Done** (Initialized and populated with basic sets of data)
 * Administration - **Done** (More features will be added if required)
-* Server - **Partially done** (Dummy routes added for each functionality, only user management implemented: register, log in, log out)
-* Client - **Partially done** (Only user management functionalities implemented: register, log in, log out)
+* Server - **Done**
+* Client - **Done**
 * Monitoring service - **Not implemented**
 ## How to
 ### Starting the services
