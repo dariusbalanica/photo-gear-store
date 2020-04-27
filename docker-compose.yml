@@ -10,6 +10,8 @@ services:
       - "5000:5000"
     tty: true
     stdin_open: true
+    networks:
+      - my_network
 
   client:
     image: dariusbalanica/photo-gear-store:latest-client
@@ -19,6 +21,8 @@ services:
       - db
     tty: true
     stdin_open: true
+    networks:
+      - my_network
 
   administration:
     image: dariusbalanica/photo-gear-store:latest-administration
@@ -28,6 +32,8 @@ services:
       - db
     tty: true
     stdin_open: true
+    networks:
+      - my_network
 
   db:
     image: mysql:5.7
@@ -37,3 +43,22 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - ./db:/docker-entrypoint-initdb.d/:ro
+    networks:
+      - my_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    user: '0'
+    volumes:
+      - /srv/docker/grafana/data:/var/lib/grafana
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
