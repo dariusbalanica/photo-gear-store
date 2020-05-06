@@ -17,7 +17,7 @@ Services:
 * Administration - **Done** (More features will be added if required)
 * Server - **Done**
 * Client - **Done**
-* Monitoring service - **Not implemented**
+* Monitoring service - **Done**
 ## How to
 ### Starting the services
 1. Download the associated `docker-compose.yml` file
@@ -33,3 +33,17 @@ Services:
 * to see the menu for a service, simply type `ENTER` after attaching to it
 * Each service contains instructions to navigate through the menus
 * Each menu entry contains the format of the data to be inserted in order to perform a specific operation
+
+### Swarm inside a cloud environment
+1. Creating machines:
+   - sudo docker-machine create --driver amazonec2 --amazonec2-region eu-west-2 --amazonec2-open-port 5000 --amazonec2-open-port 5002 --amazonec2-open-port 5001 --amazonec2-open-port 3000 --amazonec2-open-port 3306 --amazonec2-open-port 2377 --amazonec2-access-key <access key> --amazonec2-secret-key <secret key> myaws-1
+   - same for second machine, but with a different name (myaws-2)
+2. Initializing swarm:
+   - Manager: sudo docker-machine ssh myaws-1 "sudo docker swarm init --advertise-addr 35.177.128.157"
+   - Workers: sudo docker-machine ssh myaws-2 "docker swarm join --token <token> 35.177.128.157:2377"
+3. Preparing infrastructure and starting services (after cloning repo, from the root path of the repo):
+   - sudo docker-machine scp docker-compose.yml myaws-1:.
+   - sudo docker-machine scp -r db myaws-1:.
+   - sudo docker-machine scp -r grafana myaws-1:.
+   - sudo docker-machine ssh myaws-1 "sudo docker stack deploy -c docker-compose.yml photogearstore"
+   - sudo docker-machine ssh myaws-1 "sudo docker stack ps photogearstore"
